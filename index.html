@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Poker Board</title>
+    <link type="text/css" rel="stylesheet" href="./style.css" />
+    <script type="text/javascript" src="./main.js"></script>
+    <script type="text/javascript" src="./data.js"></script>
+</head>
+<body>
+
+    <div id="container">
+        <h1>Poker Board Generator</h1>
+        <p>
+            <a href="#" id="image-link" target="_blank">Open image in new window</a>
+            <br><br>
+            <button id="run-last" onclick="runLast()"><< Last</button>
+            <button id="run-next" onclick="runNext()">Next >></button>
+
+            <input type="number" id="current" size="3" max="999" min="1" style="width: 40px;" maxlength="3"/>
+            <button id="run-this" onclick="runThis()">Go</button>
+
+        </p>
+        <canvas id="main" width="724" height="724"></canvas>
+    </div>
+
+    <div id="pre-container">
+        <canvas id="renderer-0" width="373" height="373"></canvas>
+        <canvas id="renderer-1" width="373" height="373"></canvas>
+        <canvas id="renderer-2" width="373" height="373"></canvas>
+        <canvas id="renderer-3" width="373" height="373"></canvas>
+        <canvas id="renderer-4" width="373" height="373"></canvas>
+        <canvas id="renderer-5" width="373" height="373"></canvas>
+        <canvas id="renderer-6" width="373" height="373"></canvas>
+        <canvas id="renderer-7" width="373" height="373"></canvas>
+        <canvas id="renderer-8" width="373" height="373"></canvas>
+        <canvas id="renderer-9" width="373" height="373"></canvas>
+    </div>
+
+    <div id="images">
+
+    </div>
+
+<script type="text/javascript">
+    Utils.loadImages([
+        "poker/0",
+        "poker/11",
+        "poker/12",
+        "poker/13",
+        "poker/14",
+        "poker/15",
+        "poker/16",
+        "poker/17",
+        "poker/18",
+        "poker/19",
+        "poker/110",
+        "poker/111",
+        "poker/112",
+        "poker/113",
+        "poker/21",
+        "poker/22",
+        "poker/23",
+        "poker/24",
+        "poker/25",
+        "poker/26",
+        "poker/27",
+        "poker/28",
+        "poker/29",
+        "poker/210",
+        "poker/211",
+        "poker/212",
+        "poker/213",
+
+        "face/thrill-0",
+        "face/thrill-1",
+        "face/gentle-0",
+        "face/gentle-1"
+    ]);
+    setTimeout(main, 200);
+</script>
+</body>
+</html>

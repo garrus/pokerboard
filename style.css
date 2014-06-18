@@ -1,0 +1,48 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    background-color: black;
+    color: #f0f0f0;
+    font-family: Arial, Helvetica, Tahoma, Verdana, Sans-Serif;
+}
+
+#container {
+    background-color: black;
+    min-width: 1200px;
+    min-height: 900px;
+    margin: auto;
+    text-align: center;
+    padding: 20px;
+}
+#main {
+    margin-top: 15px;
+}
+
+a {
+    color: lime;
+}
+h1 {
+    margin-bottom: 8px;
+}
+button {
+    margin: 0 10px;
+    padding: 3px 8px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+#pre-container {
+    background-color: black;
+    width: 1200px;
+    height: 900px;
+    margin: auto;
+    text-align: center;
+    padding: 20px;
+    display: none;
+}
+#pre-container canvas {
+    border: 2px solid white;
+    margin: 15px 30px;
+
+}
