@@ -3,6 +3,49 @@ var canvas;
 var ctx;
 var currentGame;
 
+var Settings = {
+    darkColor: "#999",
+    lightColor: "#fff",
+    crossColor: "#0f0",
+    labelColor: "#000",
+    scoreColor: "#f00",
+    boldFont: "bold 46px Arial",
+    lineLength: 26,
+    lineWidth: 6,
+    width: 0,
+    height: 0,
+    cardHeight: 311,
+    cardWidth: 205,
+    faceHeight: 128,
+    faceWidth: 128,
+    textBoxWidth: 250,
+    textBoxHeight: 130,
+    rendererHeight: 373,
+    rendererWidth: 373,
+    _rendererRadius: null,
+    _radius: null,
+    get rendererRadius(){
+        if (this._rendererRadius) return this._rendererRadius;
+        return this._rendererRadius = Math.sqrt(2 * this.rendererHeight * this.rendererHeight) / 2;
+    },
+    get radius(){
+        if (this._radius) return this._radius;
+        return this._radius = Math.min(this.width, this.height) / 2 - 1;
+    },
+    get rendererScale(){
+        return 0.5;
+    },
+    get scale(){
+        return this.width / 724;
+    },
+    get centerPoint(){
+        return {
+            x: this.width / 2,
+            y: this.height / 2
+        };
+    }
+};
+
 function main(){
 
     canvas = document.getElementById("main");
@@ -11,6 +54,11 @@ function main(){
 
     ctx = canvas.getContext("2d");
     ctx.translate(Settings.centerPoint.x, Settings.centerPoint.y);
+
+    var scale = Settings.scale;
+    Settings.width = 724;
+    Settings.height = 724;
+    ctx.scale(scale, scale);
     ctx.font = Settings.boldFont;
     ctx.textAlign = "center";
     ctx.textBaseline = "baseline";
@@ -29,7 +77,7 @@ function autoRun(){
 
     function postData(){
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/build.php?id=' + (currentGame.id + 1), false);
+        xhr.open('POST', 'build.php?name=' + currentGame.getName(), false);
         xhr.send(canvas.toDataURL("image/png"));
     }
 }
@@ -137,42 +185,6 @@ function exportImage(){
     link.innerHTML = "Export image of record #" + (currentGame.id + 1);
 }
 
-var Settings = {
-    darkColor: "#999",
-    lightColor: "#fff",
-    crossColor: "#0f0",
-    labelColor: "#000",
-    scoreColor: "#f00",
-    boldFont: "bold 46px Arial",
-    lineLength: 26,
-    lineWidth: 6,
-    width: 0,
-    height: 0,
-    cardHeight: 311,
-    cardWidth: 205,
-    faceHeight: 128,
-    faceWidth: 128,
-    textBoxWidth: 250,
-    textBoxHeight: 130,
-    rendererHeight: 373,
-    rendererWidth: 373,
-    _rendererRadius: null,
-    _radius: null,
-    get rendererRadius(){
-        if (this._rendererRadius) return this._rendererRadius;
-        return this._rendererRadius = Math.sqrt(2 * this.rendererHeight * this.rendererHeight) / 2;
-    },
-    get radius(){
-        if (this._radius) return this._radius;
-        return this._radius = Math.min(this.width, this.height) / 2 - 1;
-    },
-    get centerPoint(){
-        return {
-            x: this.width / 2,
-            y: this.height / 2
-        };
-    }
-};
 
 var GameManager = {
     data: [],
@@ -259,6 +271,16 @@ Game.prototype.getSummaryText = function(){
     ret.label = this.isWinning ? "You Win!" : "You Lose!";
     return ret;
 };
+Game.prototype.getName = function(){
+    var name = "";
+    name += (this.isWinning ? "W" : "L");
+    name += (this.type == Game.TYPE_GENTLE ? "70" : "30");
+    name += "S";
+    name += (this.id + 1).toString();
+    name += "A";
+    name += (this.pokers.indexOf("0") + 1).toString();
+    return name;
+};
 
 
 var Utils = {
@@ -271,7 +293,7 @@ var Utils = {
     loadImages: function(nameList){
         var count = nameList.length;
         nameList.map(function(name){
-            var imageUrl = "/images/" + name + ".jpg";
+            var imageUrl = "images/" + name + ".jpg";
             var image = new Image();
             image.onload = function(){
                 console.debug("Image " + imageUrl + " loaded.");
@@ -325,7 +347,7 @@ var RendererManager = {
         var ctx = canvas.getContext("2d");
         ctx.translate(186, 186);
         ctx.rotate(-Math.PI * (2 * i + 1) / 10);
-        ctx.scale(0.5, 0.5);
+        ctx.scale(Settings.rendererScale, Settings.rendererScale);
         return {canvas: canvas, ctx: ctx};
     },
     drawImage: function(id, image){
@@ -338,5 +360,3 @@ var RendererManager = {
         return record.canvas;
     }
 };
-
-
