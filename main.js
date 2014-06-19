@@ -36,7 +36,7 @@ var Settings = {
         return 0.5;
     },
     get scale(){
-        return this.width / 724;
+        return 1;//this.width / 724;
     },
     get centerPoint(){
         return {
@@ -68,6 +68,10 @@ function main(){
     run();
 }
 
+function getCanvasData(){
+    return canvas.toDataURL("image/jpeg", 1);
+}
+
 function autoRun(){
     currentGame = GameManager.pickGame(0);
     do {
@@ -77,8 +81,8 @@ function autoRun(){
 
     function postData(){
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'build.php?name=' + currentGame.getName(), false);
-        xhr.send(canvas.toDataURL("image/png"));
+        xhr.open('POST', 'build.php?name=' + currentGame.getName() + '.jpg', false);
+        xhr.send(getCanvasData());
     }
 }
 
@@ -181,7 +185,7 @@ function drawCross(){
 function exportImage(){
     var link = document.getElementById("image-link");
     link.style = "display: inline;";
-    link.href = canvas.toDataURL("image/png");
+    link.href = getCanvasData();
     link.innerHTML = "Export image of record #" + (currentGame.id + 1);
 }
 
