@@ -9,7 +9,8 @@ var Settings = {
     crossColor: "#0f0",
     labelColor: "#000",
     scoreColor: "#f00",
-    boldFont: "bold 46px Arial",
+    labelFont: "bold 46px Arial",
+    scoreFont: "bold 52px Arial",
     lineLength: 26,
     lineWidth: 6,
     width: 0,
@@ -59,7 +60,6 @@ function main(){
     Settings.width = 724;
     Settings.height = 724;
     ctx.scale(scale, scale);
-    ctx.font = Settings.boldFont;
     ctx.textAlign = "center";
     ctx.textBaseline = "baseline";
 
@@ -69,7 +69,7 @@ function main(){
 }
 
 function getCanvasData(){
-    return canvas.toDataURL("image/jpeg", 1);
+    return canvas.toDataURL("image/png");
 }
 
 function autoRun(){
@@ -81,7 +81,7 @@ function autoRun(){
 
     function postData(){
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'build.php?name=' + currentGame.getName() + '.jpg', false);
+        xhr.open('POST', 'build.php?name=' + currentGame.getName() + '.png', false);
         xhr.send(getCanvasData());
     }
 }
@@ -119,6 +119,65 @@ function run(skipOutput){
 
     if (!skipOutput) exportImage();
 }
+
+function drawBack(type){
+    // draw board
+    if (type == Game.TYPE_GENTLE) {
+        ctx.fillStyle = Settings.darkColor;
+        Utils.drawSector(ctx, Math.PI / 10, Math.PI * 3/2, Settings.radius, true, false);
+        ctx.fillStyle = Settings.lightColor;
+        Utils.drawSector(ctx, Math.PI / 10, Math.PI * 3/2, Settings.radius, true, true);
+    } else {
+        ctx.fillStyle = Settings.darkColor;
+        Utils.drawSector(ctx, Math.PI * 9/10, Math.PI * 3/2, Settings.radius, true, false);
+        ctx.fillStyle = Settings.lightColor;
+        Utils.drawSector(ctx, Math.PI * 9/10, Math.PI * 3/2, Settings.radius, true, true);
+    }
+
+    // draw card
+    for (var i = 0, image = Utils.getImage("poker/background"); i<10; i++) {
+        var renderer = RendererManager.drawImage(i, image);
+        var pos = Utils.calculatePokerPosition(i);
+        ctx.drawImage(renderer, pos.x, pos.y);
+    }
+
+    // draw text
+    ctx.fillStyle = "orange";
+    ctx.font = "bold 60pt Calibri";
+    ctx.textBaseline = "middle";
+    var text = type == Game.TYPE_GENTLE ? "5" : "25";
+    ctx.fillText(text, 0, 0);
+
+    drawCross();
+
+    exportImage();
+}
+
+function drawCircle(){
+    ctx.fillStyle = Settings.lightColor;
+    Utils.drawSector(ctx, 0, Math.PI * 2, Settings.radius, true, true);
+
+    ctx.fillStyle = "black";
+    Utils.drawSector(ctx, 0, Math.PI * 2, Settings.radius - 5, true, true);
+
+    drawCross();
+    exportImage();
+}
+
+
+function drawRect(){
+    ctx.fillStyle = "black";
+    ctx.fillRect(
+        -Settings.radius,
+        -Settings.radius,
+        Settings.radius * 2,
+        Settings.radius * 2
+    );
+
+    drawCross();
+    exportImage();
+}
+
 
 function drawBoard(){
     if (currentGame.type == Game.TYPE_GENTLE) {
@@ -164,8 +223,10 @@ function drawTextBox(){
 function drawText(){
     var text = currentGame.getSummaryText();
     ctx.fillStyle = Settings.labelColor;
+    ctx.font = Settings.labelFont;
     ctx.fillText(text.label, 0, - Settings.textBoxHeight / 2 - 10 - Settings.faceHeight / 2, Settings.textBoxWidth);
     ctx.fillStyle = Settings.scoreColor;
+    ctx.font = Settings.scoreFont;
     ctx.fillText(text.score, 0, - Settings.faceHeight / 2 - 10, Settings.textBoxWidth);
 }
 
@@ -251,7 +312,7 @@ Game.calculateIsWinning = function(pokers, type){
     }
 };
 Game.calculateScore = function(type, isWinning){
-    var absScore = type == Game.TYPE_GENTLE ? 5 : 25;
+    var absScore = type == Game.TYPE_GENTLE ? 25 : 5;
     return isWinning ? absScore : -absScore;
 };
 
@@ -263,7 +324,7 @@ Game.prototype.getNextPokerImage = function(){
     }
 };
 Game.prototype.getFaceImage = function(){
-    return Utils.getImage("face/" + this.type + "-" + (this.isWinning ? "1" : "0"));
+    return Utils.getImage("face/" + Math.abs(this.score) + "-" + (this.isWinning ? "1" : "0"));
 };
 Game.prototype.getSummaryText = function(){
     var ret = {};
@@ -278,9 +339,9 @@ Game.prototype.getSummaryText = function(){
 Game.prototype.getName = function(){
     var name = "";
     name += (this.isWinning ? "W" : "L");
-    name += (this.type == Game.TYPE_GENTLE ? "70" : "30");
+    name += (this.type == Game.TYPE_GENTLE ? "30" : "70");
     name += "S";
-    name += (this.id + 1).toString();
+    name += (this.id + 501).toString();
     name += "A";
     name += (this.pokers.indexOf("0") + 1).toString();
     return name;
